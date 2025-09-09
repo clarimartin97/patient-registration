@@ -1,6 +1,5 @@
 const Joi = require('joi');
 
-// Validation schema for patient registration
 const patientSchema = Joi.object({
   fullName: Joi.string()
     .pattern(/^[a-zA-Z\s]+$/)
@@ -33,7 +32,6 @@ const patientSchema = Joi.object({
     })
 });
 
-// Middleware to validate patient data
 const validatePatient = (req, res, next) => {
   const { error, value } = patientSchema.validate(req.body, { abortEarly: false });
   
@@ -46,12 +44,10 @@ const validatePatient = (req, res, next) => {
     });
   }
   
-  // Replace req.body with validated and sanitized data
   req.body = value;
   next();
 };
 
-// Middleware to check if file was uploaded
 const validateFileUpload = (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({

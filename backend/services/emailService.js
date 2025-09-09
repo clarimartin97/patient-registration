@@ -58,10 +58,8 @@ class EmailService {
 
     try {
       const info = await transporter.sendMail(mailOptions);
-      console.log('Confirmation email sent successfully:', info.messageId);
       return { success: true, messageId: info.messageId };
     } catch (error) {
-      console.error('Error sending confirmation email:', error);
       throw new Error('Failed to send confirmation email');
     }
   }
@@ -92,9 +90,8 @@ ${JSON.stringify(patientData, null, 2)}
 
     try {
       await transporter.sendMail(mailOptions);
-      console.log('Error notification sent to admin');
     } catch (emailError) {
-      console.error('Failed to send error notification:', emailError);
+      // Silent fail for error notification
     }
   }
 }

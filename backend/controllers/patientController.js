@@ -8,7 +8,6 @@ class PatientController {
       const { fullName, email, phone } = req.body;
       const documentPhoto = req.file;
 
-      // Check if email already exists
       const existingPatient = await Patient.findByEmail(email);
       if (existingPatient) {
         return res.status(409).json({
@@ -17,18 +16,15 @@ class PatientController {
         });
       }
 
-      // Prepare patient data
       const patientData = {
         fullName,
         email,
         phone,
-        documentPhoto: documentPhoto.filename // Store filename in database
+        documentPhoto: documentPhoto.filename
       };
 
-      // Create patient in database
       const newPatient = await Patient.create(patientData);
 
-      // Send confirmation email
       try {
         await EmailService.sendConfirmationEmail({
           fullName,
@@ -36,11 +32,9 @@ class PatientController {
           id: newPatient.id
         });
       } catch (emailError) {
-        console.error('Email sending failed:', emailError);
         // Don't fail the registration if email fails
       }
 
-      // Return success response
       res.status(201).json({
         success: true,
         message: 'Patient registered successfully',
@@ -54,17 +48,13 @@ class PatientController {
       });
 
     } catch (error) {
-      console.error('Patient registration error:', error);
-      
-      // Send error notification to admin
       try {
         await EmailService.sendErrorNotification(error, req.body);
       } catch (emailError) {
-        console.error('Failed to send error notification:', emailError);
+        // Silent fail for error notification
       }
 
-      // Handle specific database errors
-      if (error.code === '23505') { // Unique constraint violation
+      if (error.code === '23505') {
         return res.status(409).json({
           success: false,
           message: 'Email already exists. Please use a different email address.'
@@ -94,7 +84,6 @@ class PatientController {
         }))
       });
     } catch (error) {
-      console.error('Error retrieving patients:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error. Please try again later.'
@@ -127,7 +116,6 @@ class PatientController {
         }
       });
     } catch (error) {
-      console.error('Error retrieving patient:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error. Please try again later.'
@@ -141,7 +129,6 @@ class PatientController {
       const uploadPath = process.env.UPLOAD_PATH || './uploads';
       const filePath = path.join(uploadPath, filename);
 
-      // Check if file exists
       const fs = require('fs');
       if (!fs.existsSync(filePath)) {
         return res.status(404).json({
@@ -150,10 +137,8 @@ class PatientController {
         });
       }
 
-      // Serve the file
       res.sendFile(path.resolve(filePath));
     } catch (error) {
-      console.error('Error serving document photo:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error. Please try again later.'
