@@ -1,0 +1,125 @@
+.file-upload-container {
+  width: 100%;
+}
+
+.file-upload-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+  position: relative;
+  overflow: hidden;
+}
+
+.file-upload-zone:hover:not(.file-upload-zone--disabled) {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.file-upload-zone--active {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+  transform: scale(1.02);
+}
+
+.file-upload-zone--reject {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+  animation: shake 0.5s ease-in-out;
+}
+
+.file-upload-zone--error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.file-upload-zone--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f3f4f6;
+}
+
+.file-upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-upload-icon {
+  font-size: 2rem;
+  opacity: 0.7;
+}
+
+.file-upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-upload-text--primary {
+  font-weight: 500;
+  color: #374151;
+  font-size: 1rem;
+}
+
+.file-upload-text--secondary {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.file-upload-text--hint {
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.file-upload-text--error {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.file-upload-error {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 0.875rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .file-upload-zone {
+    padding: 24px 12px;
+  }
+  
+  .file-upload-icon {
+    font-size: 1.5rem;
+  }
+  
+  .file-upload-text--primary {
+    font-size: 0.875rem;
+  }
+}

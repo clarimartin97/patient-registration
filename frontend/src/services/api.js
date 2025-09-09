@@ -1,0 +1,82 @@
+import axios from 'axios';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor
+api.interceptors.request.use(
+  (config) => {
+    console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
+export const patientAPI = {
+  // Get all patients
+  getAllPatients: async () => {
+    try {
+      const response = await api.get('/patients');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch patients');
+    }
+  },
+
+  // Get patient by ID
+  getPatientById: async (id) => {
+    try {
+      const response = await api.get(`/patients/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch patient');
+    }
+  },
+
+  // Register new patient
+  registerPatient: async (patientData) => {
+    try {
+      const formData = new FormData();
+      formData.append('fullName', patientData.fullName);
+      formData.append('email', patientData.email);
+      formData.append('phone', patientData.phone);
+      formData.append('documentPhoto', patientData.documentPhoto);
+
+      const response = await api.post('/patients', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to register patient');
+    }
+  },
+
+  // Get document photo URL
+  getDocumentPhotoUrl: (filename) => {
+    return `${API_BASE_URL}/patients/documents/${filename}`;
+  },
+};
+
+export default api;
