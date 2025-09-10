@@ -5,17 +5,20 @@ WORKDIR /usr/src/app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install all dependencies (prod + dev)
 RUN npm install
 
-# Copy source code
+# Install nodemon globally
+RUN npm install -g nodemon
+
+# Copy the rest of the source code
 COPY . .
 
-# Create uploads directory with proper permissions
+# Create uploads folder
 RUN mkdir -p uploads && chmod 755 uploads
 
 # Expose port
 EXPOSE 4000
 
-# Start the application
+# Run the server
 CMD ["npm", "run", "dev"]
