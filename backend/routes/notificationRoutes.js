@@ -4,7 +4,7 @@ const { validateConfig, getEnabledChannels, getChannelTemplates } = require('../
 
 /**
  * Notification Routes
- * Designed to easily accommodate SMS and other notification channels in the future
+ * Designed to accommodate SMS and other notification channels in the future
  * 
  * Current implementation: Email only
  * Future extension: SMS preferences, delivery tracking, etc.
@@ -33,7 +33,7 @@ router.get('/channels', (req, res) => {
         //     name: 'SMS',
         //     enabled: true,
         //     description: 'Send notifications via SMS text messages',
-        //     icon: '📱'
+        //     icon: ''
         //   };
         default:
           return {
@@ -41,7 +41,7 @@ router.get('/channels', (req, res) => {
             name: channel.charAt(0).toUpperCase() + channel.slice(1),
             enabled: true,
             description: `Send notifications via ${channel}`,
-            icon: '📢'
+            icon: ''
           };
       }
     });
@@ -69,7 +69,7 @@ router.get('/config', (req, res) => {
     res.json({
       success: true,
       data: {
-        globalEnabled: true, // Will be dynamic in the future
+        globalEnabled: true, 
         channels: getEnabledChannels(),
         validation
       }
@@ -175,15 +175,7 @@ router.post('/test/:channel', async (req, res) => {
         }
       });
     } 
-    // Future SMS test:
-    // else if (channel === 'sms') {
-    //   const result = await SmsService.sendTestMessage(recipient, message);
-    //   res.json({
-    //     success: true,
-    //     message: 'Test SMS sent successfully',
-    //     data: result
-    //   });
-    // }
+    // Future SMS test
     else {
       res.status(400).json({
         success: false,
@@ -199,22 +191,17 @@ router.post('/test/:channel', async (req, res) => {
 });
 
 /**
- * Future endpoints that will be implemented when SMS is added:
+ * Future endpoints for SMS:
  * 
  * GET /api/notifications/patients/:id/preferences
- * Get notification preferences for a specific patient
  * 
  * PUT /api/notifications/patients/:id/preferences
- * Update notification preferences for a specific patient
  * 
  * GET /api/notifications/deliveries
- * Get SMS delivery history and status
  * 
  * POST /api/notifications/webhooks/sms
- * Handle SMS delivery status webhooks
  * 
  * GET /api/notifications/providers
- * Get available SMS providers and their status
  */
 
 module.exports = router;

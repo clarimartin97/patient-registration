@@ -68,7 +68,6 @@ class EmailService {
     }
   }
 
-  // Asynchronous email sending that doesn't block the main process
   static sendConfirmationEmailAsync(patientData) {
     // Use setImmediate to ensure this runs in the next tick of the event loop
     setImmediate(async () => {
@@ -76,7 +75,6 @@ class EmailService {
         await this.sendConfirmationEmail(patientData);
       } catch (error) {
         console.error('Async email sending failed:', error.message);
-        // Optionally, you could implement a retry mechanism or queue failed emails
       }
     });
   }
@@ -111,11 +109,10 @@ ${JSON.stringify(patientData, null, 2)}
       return { success: true, messageId: info.messageId };
     } catch (emailError) {
       console.error(`❌ Failed to send error notification email:`, emailError.message);
-      // Silent fail for error notification to avoid cascading errors
     }
   }
 
-  // Asynchronous error notification that doesn't block the main process
+  // Asynchronous error notification
   static sendErrorNotificationAsync(error, patientData) {
     setImmediate(async () => {
       try {

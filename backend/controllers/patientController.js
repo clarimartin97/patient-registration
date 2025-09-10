@@ -25,8 +25,7 @@ class PatientController {
 
       const newPatient = await Patient.create(patientData);
 
-      // Send confirmation notification asynchronously (non-blocking)
-      // Currently sends email, but designed to easily add SMS in the future
+      // add SMS in the future
       NotificationService.sendRegistrationConfirmationAsync({
         fullName,
         email,
@@ -50,8 +49,7 @@ class PatientController {
       });
 
     } catch (error) {
-      // Send error notification asynchronously (non-blocking)
-      // Currently sends email to admin, but designed to easily add SMS in the future
+      // add SMS in the future
       NotificationService.sendErrorNotificationAsync(error, req.body);
 
       if (error.code === '23505') {
@@ -131,7 +129,7 @@ class PatientController {
   static async serveDocumentPhoto(req, res) {
     try {
       const { filename } = req.params;
-      const uploadPath = process.env.UPLOAD_PATH || './uploads';
+      const uploadPath = process.env.UPLOAD_PATH;
       const filePath = path.join(uploadPath, filename);
 
       const fs = require('fs');
@@ -143,7 +141,7 @@ class PatientController {
       }
 
       // CORS for images
-      res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:3000');
+      res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:3000' );
       res.header('Access-Control-Allow-Methods', 'GET');
       res.header('Access-Control-Allow-Headers', 'Content-Type');
       res.header('Cross-Origin-Resource-Policy', 'cross-origin');
