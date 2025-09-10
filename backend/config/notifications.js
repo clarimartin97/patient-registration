@@ -23,7 +23,7 @@ const notificationConfig = {
       adminEmail: process.env.ADMIN_EMAIL
     }
   }
-
+  ,
 
   // TODO: SMS ready for future implementation
   sms: {
