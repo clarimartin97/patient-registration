@@ -82,6 +82,15 @@
   font-size: 0.875rem;
   margin-top: 4px;
   animation: slideDown 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-error::before {
+  content: "⚠";
+  font-size: 0.875rem;
+  flex-shrink: 0;
 }
 
 .form-actions {
@@ -132,11 +141,13 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
+    max-height: 0;
   }
   to {
     opacity: 1;
     transform: translateY(0);
+    max-height: 20px;
   }
 }
 

@@ -13,6 +13,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
   const [errors, setErrors] = useState({});
   const [documentPhoto, setDocumentPhoto] = useState(null);
   const [documentPhotoError, setDocumentPhotoError] = useState('');
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   const validateField = (name, value) => {
     let error = '';
@@ -61,8 +62,8 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
       [name]: value
     }));
 
-    // Clear error when user starts typing
-    if (errors[name]) {
+    // Clear error when user starts typing (only if we've attempted submit)
+    if (hasAttemptedSubmit && errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
@@ -97,6 +98,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setHasAttemptedSubmit(true);
     
     if (validateForm()) {
       const phone = formData.countryCode + formData.phoneNumber;
@@ -110,12 +112,15 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
   };
 
   const handleBlur = (e) => {
-    const { name, value } = e.target;
-    const error = validateField(name, value);
-    setErrors(prev => ({
-      ...prev,
-      [name]: error
-    }));
+    // Only validate on blur if we've attempted to submit
+    if (hasAttemptedSubmit) {
+      const { name, value } = e.target;
+      const error = validateField(name, value);
+      setErrors(prev => ({
+        ...prev,
+        [name]: error
+      }));
+    }
   };
 
   return (
@@ -135,7 +140,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
           placeholder="Enter full name (letters only)"
           disabled={isLoading}
         />
-        {errors.fullName && (
+        {hasAttemptedSubmit && errors.fullName && (
           <div className="form-error">
             {errors.fullName}
           </div>
@@ -157,7 +162,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
           placeholder="example@gmail.com"
           disabled={isLoading}
         />
-        {errors.email && (
+        {hasAttemptedSubmit && errors.email && (
           <div className="form-error">
             {errors.email}
           </div>
@@ -259,7 +264,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
             disabled={isLoading}
           />
         </div>
-        {errors.phoneNumber && (
+        {hasAttemptedSubmit && errors.phoneNumber && (
           <div className="form-error">
             {errors.phoneNumber}
           </div>

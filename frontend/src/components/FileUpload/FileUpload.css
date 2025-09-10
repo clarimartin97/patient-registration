@@ -90,6 +90,15 @@
   color: #dc2626;
   font-size: 0.875rem;
   animation: slideDown 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.file-upload-error::before {
+  content: "⚠";
+  font-size: 0.875rem;
+  flex-shrink: 0;
 }
 
 @keyframes shake {
@@ -101,11 +110,13 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
+    max-height: 0;
   }
   to {
     opacity: 1;
     transform: translateY(0);
+    max-height: 20px;
   }
 }
 

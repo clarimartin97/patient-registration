@@ -6,6 +6,7 @@ import PatientForm from './components/PatientForm/PatientForm';
 import LoadingState from './components/LoadingState/LoadingState';
 import EmptyState from './components/EmptyState/EmptyState';
 import Notification from './components/Notification/Notification';
+import ModalState from './components/ModalState/ModalState';
 import './App.css';
 
 function App() {
@@ -15,6 +16,11 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState({
+    isVisible: false,
+    type: 'success',
+    message: ''
+  });
+  const [modalState, setModalState] = useState({
     isVisible: false,
     type: 'success',
     message: ''
@@ -52,19 +58,43 @@ function App() {
     }));
   };
 
+  // Show modal state
+  const showModalState = (type, message) => {
+    setModalState({
+      isVisible: true,
+      type,
+      message
+    });
+  };
+
+  // Hide modal state
+  const hideModalState = () => {
+    setModalState(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
   // Handle patient registration
   const handlePatientSubmit = async (patientData) => {
     try {
       setIsSubmitting(true);
       await patientAPI.registerPatient(patientData);
       
-      // Close modal and refresh patients list
+      // Close form modal and refresh patients list
       setIsModalOpen(false);
       await fetchPatients();
       
-      showNotification('success', 'Patient registered successfully!');
+      // Show success modal state
+      showModalState('success', 'Patient registered successfully!');
     } catch (err) {
-      showNotification('error', `Registration failed: ${err.message}`);
+      // Close form modal first, then show error modal state
+      setIsModalOpen(false);
+      
+      // Small delay to ensure modal closes before showing error
+      setTimeout(() => {
+        showModalState('error', err.message);
+      }, 100);
     } finally {
       setIsSubmitting(false);
     }
@@ -172,6 +202,13 @@ function App() {
         message={notification.message}
         isVisible={notification.isVisible}
         onClose={hideNotification}
+      />
+
+      <ModalState
+        type={modalState.type}
+        message={modalState.message}
+        isVisible={modalState.isVisible}
+        onClose={hideModalState}
       />
     </div>
   );

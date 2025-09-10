@@ -44,28 +44,34 @@ const PatientCard = ({ patient, onError }) => {
       className={`patient-card ${isExpanded ? 'patient-card--expanded' : ''}`}
       onClick={handleCardClick}
     >
-      <div className="patient-card__header">
-        <div className="patient-card__avatar">
-          {imageLoading && (
-            <div className="patient-card__avatar-loading">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
-          {imageError ? (
-            <div className="patient-card__avatar-fallback">
+      {/* Document Photo Section */}
+      <div className="patient-card__photo-section">
+        {imageLoading && (
+          <div className="patient-card__photo-loading">
+            <div className="loading-spinner"></div>
+          </div>
+        )}
+        {imageError ? (
+          <div className="patient-card__photo-fallback">
+            <div className="patient-card__photo-fallback-icon">
               {getInitials(patient.fullName)}
             </div>
-          ) : (
-            <img
-              src={patientAPI.getDocumentPhotoUrl(patient.documentPhoto)}
-              alt={`${patient.fullName}'s document`}
-              className="patient-card__avatar-image"
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              style={{ display: imageLoading ? 'none' : 'block' }}
-            />
-          )}
-        </div>
+            <p className="patient-card__photo-fallback-text">Document Photo</p>
+          </div>
+        ) : (
+          <img
+            src={patientAPI.getDocumentPhotoUrl(patient.documentPhoto)}
+            alt={`${patient.fullName}'s document`}
+            className="patient-card__photo"
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            style={{ display: imageLoading ? 'none' : 'block' }}
+          />
+        )}
+      </div>
+
+      {/* Header with Name, Date, and Expand Icon */}
+      <div className="patient-card__header">
         <div className="patient-card__info">
           <h3 className="patient-card__name">{patient.fullName}</h3>
           <p className="patient-card__date">
@@ -77,6 +83,7 @@ const PatientCard = ({ patient, onError }) => {
         </div>
       </div>
 
+      {/* Expandable Details Section */}
       {isExpanded && (
         <div className="patient-card__details">
           <div className="patient-card__detail-item">

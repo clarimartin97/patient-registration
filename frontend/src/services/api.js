@@ -65,7 +65,14 @@ export const patientAPI = {
       });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to register patient');
+      // Handle specific error cases
+      if (error.response?.status === 409) {
+        throw new Error('This email is already registered. Please use a different email address.');
+      } else if (error.response?.status === 400) {
+        throw new Error('Invalid data. Please check the information entered.');
+      } else {
+        throw new Error(error.response?.data?.message || 'Failed to register patient. Please try again.');
+      }
     }
   },
 
