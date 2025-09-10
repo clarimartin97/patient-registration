@@ -50,7 +50,6 @@ textarea {
   line-height: inherit;
 }
 
-/* Utility classes */
 .sr-only {
   position: absolute;
   width: 1px;

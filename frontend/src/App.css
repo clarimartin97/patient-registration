@@ -1,4 +1,3 @@
-/* Global styles */
 * {
   box-sizing: border-box;
 }
@@ -73,7 +72,6 @@ body {
   width: 100%;
 }
 
-/* Patients grid */
 .patients-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -81,7 +79,6 @@ body {
   align-items: start;
 }
 
-/* Error state */
 .error-state {
   display: flex;
   flex-direction: column;
@@ -131,7 +128,7 @@ body {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-/* Responsive design */
+/* Responsive */
 @media (max-width: 768px) {
   .app__header {
     padding: 20px 16px;

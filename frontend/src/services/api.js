@@ -29,7 +29,7 @@ api.interceptors.response.use(
 );
 
 export const patientAPI = {
-  // Get all patients
+  // Get patients
   getAllPatients: async () => {
     try {
       const response = await api.get('/patients');
@@ -65,7 +65,6 @@ export const patientAPI = {
       });
       return response.data;
     } catch (error) {
-      // Handle specific error cases
       if (error.response?.status === 409) {
         throw new Error('This email is already registered. Please use a different email address.');
       } else if (error.response?.status === 400) {
@@ -76,7 +75,7 @@ export const patientAPI = {
     }
   },
 
-  // Get document photo URL
+  // Get photo URL
   getDocumentPhotoUrl: (filename) => {
     return `${API_BASE_URL}/patients/documents/${filename}`;
   },

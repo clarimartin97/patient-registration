@@ -23,11 +23,11 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
         if (!value.trim()) {
           error = 'Full name is required';
         } else if (!/^[a-zA-Z\s]+$/.test(value)) {
-          error = 'Full name must contain only letters and spaces';
+          error = 'Only letters and spaces allowed';
         } else if (value.trim().length < 2) {
-          error = 'Full name must be at least 2 characters long';
+          error = 'At least 2 characters';
         } else if (value.trim().length > 100) {
-          error = 'Full name must not exceed 100 characters';
+          error = 'Too long (max 100 chars)';
         }
         break;
 
@@ -35,7 +35,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
         if (!value.trim()) {
           error = 'Email is required';
         } else if (!/^[^\s@]+@gmail\.com$/.test(value)) {
-          error = 'Email must be a valid Gmail address (@gmail.com)';
+          error = 'Must be a Gmail address';
         }
         break;
 
@@ -43,7 +43,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
         if (!value.trim()) {
           error = 'Phone number is required';
         } else if (!/^\d{4,14}$/.test(value)) {
-          error = 'Phone number must be 4-14 digits';
+          error = '4-14 digits only';
         }
         break;
 
@@ -62,7 +62,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
       [name]: value
     }));
 
-    // Clear error when user starts typing (only if we've attempted submit)
+    // clear error when user starts typing
     if (hasAttemptedSubmit && errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -79,7 +79,6 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Validate all fields
     Object.keys(formData).forEach(field => {
       const error = validateField(field, formData[field]);
       if (error) {
@@ -87,7 +86,6 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
       }
     });
 
-    // Validate document photo
     if (!documentPhoto) {
       setDocumentPhotoError('Document photo is required');
     }
@@ -112,7 +110,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
   };
 
   const handleBlur = (e) => {
-    // Only validate on blur if we've attempted to submit
+    // validate on blur after first submit attempt
     if (hasAttemptedSubmit) {
       const { name, value } = e.target;
       const error = validateField(name, value);
@@ -137,7 +135,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
           onChange={handleInputChange}
           onBlur={handleBlur}
           className={`form-input ${errors.fullName ? 'form-input--error' : ''}`}
-          placeholder="Enter full name (letters only)"
+          placeholder="Enter full name"
           disabled={isLoading}
         />
         {hasAttemptedSubmit && errors.fullName && (
@@ -159,7 +157,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
           onChange={handleInputChange}
           onBlur={handleBlur}
           className={`form-input ${errors.email ? 'form-input--error' : ''}`}
-          placeholder="example@gmail.com"
+          placeholder="your.email@gmail.com"
           disabled={isLoading}
         />
         {hasAttemptedSubmit && errors.email && (
@@ -296,7 +294,7 @@ const PatientForm = ({ onSubmit, onCancel, isLoading }) => {
           className="btn btn--primary"
           disabled={isLoading}
         >
-          {isLoading ? 'Registering...' : 'Register Patient'}
+          {isLoading ? 'Registering...' : 'Register'}
         </button>
       </div>
     </form>

@@ -26,7 +26,6 @@ function App() {
     message: ''
   });
 
-  // Fetch patients from API
   const fetchPatients = async () => {
     try {
       setLoading(true);
@@ -35,13 +34,13 @@ function App() {
       setPatients(response.data || []);
     } catch (err) {
       setError(err.message);
-      showNotification('error', `Failed to load patients: ${err.message}`);
+      showNotification('error', `Error loading patients: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // Show notification
+ 
   const showNotification = (type, message) => {
     setNotification({
       isVisible: true,
@@ -50,7 +49,6 @@ function App() {
     });
   };
 
-  // Hide notification
   const hideNotification = () => {
     setNotification(prev => ({
       ...prev,
@@ -58,7 +56,6 @@ function App() {
     }));
   };
 
-  // Show modal state
   const showModalState = (type, message) => {
     setModalState({
       isVisible: true,
@@ -67,7 +64,6 @@ function App() {
     });
   };
 
-  // Hide modal state
   const hideModalState = () => {
     setModalState(prev => ({
       ...prev,
@@ -75,23 +71,19 @@ function App() {
     }));
   };
 
-  // Handle patient registration
+
   const handlePatientSubmit = async (patientData) => {
     try {
       setIsSubmitting(true);
       await patientAPI.registerPatient(patientData);
       
-      // Close form modal and refresh patients list
       setIsModalOpen(false);
       await fetchPatients();
       
-      // Show success modal state
-      showModalState('success', 'Patient registered successfully!');
+      showModalState('success', 'Patient registered!');
     } catch (err) {
-      // Close form modal first, then show error modal state
       setIsModalOpen(false);
       
-      // Small delay to ensure modal closes before showing error
       setTimeout(() => {
         showModalState('error', err.message);
       }, 100);
@@ -100,24 +92,21 @@ function App() {
     }
   };
 
-  // Handle modal close
   const handleModalClose = () => {
     if (!isSubmitting) {
       setIsModalOpen(false);
     }
   };
 
-  // Handle add patient button click
+ 
   const handleAddPatient = () => {
     setIsModalOpen(true);
   };
 
-  // Load patients on component mount
   useEffect(() => {
     fetchPatients();
   }, []);
 
-  // Render loading state
   if (loading) {
     return (
       <div className="app">
@@ -125,13 +114,12 @@ function App() {
           <h1 className="app__title">Patient Registration</h1>
         </div>
         <div className="app__content">
-          <LoadingState message="Loading patients..." />
+          <LoadingState message="Loading..." />
         </div>
       </div>
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <div className="app">
@@ -141,7 +129,7 @@ function App() {
         <div className="app__content">
           <div className="error-state">
             <div className="error-state__icon">⚠️</div>
-            <h3 className="error-state__title">Something went wrong</h3>
+            <h3 className="error-state__title">Oops!</h3>
             <p className="error-state__message">{error}</p>
             <button 
               className="error-state__retry"
@@ -188,7 +176,7 @@ function App() {
       <Modal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        title="Register New Patient"
+        title="New Patient"
       >
         <PatientForm
           onSubmit={handlePatientSubmit}

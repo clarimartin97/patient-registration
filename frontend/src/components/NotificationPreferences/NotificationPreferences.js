@@ -3,10 +3,7 @@ import './NotificationPreferences.css';
 
 /**
  * Notification Preferences Component
- * Designed to easily accommodate SMS preferences in the future
- * 
- * Current implementation: Email preferences only
- * Future extension: SMS preferences, delivery tracking, etc.
+ * SMS will be requested in two months
  */
 const NotificationPreferences = ({ patientId, onSave, onCancel }) => {
   const [preferences, setPreferences] = useState({
@@ -47,8 +44,7 @@ const NotificationPreferences = ({ patientId, onSave, onCancel }) => {
   };
 
   const loadPatientPreferences = async () => {
-    // Future implementation: Load patient-specific preferences
-    // For now, use default preferences
+    // At the moment, we use default preferences
     setPreferences({
       email: {
         enabled: true,
@@ -82,8 +78,6 @@ const NotificationPreferences = ({ patientId, onSave, onCancel }) => {
     setError('');
 
     try {
-      // Future implementation: Save preferences to backend
-      // await saveNotificationPreferences(patientId, preferences);
       
       console.log('Saving notification preferences:', preferences);
       
@@ -136,42 +130,6 @@ const NotificationPreferences = ({ patientId, onSave, onCancel }) => {
       // case 'sms':
       //   return (
       //     <div className="channel-preferences">
-      //       <div className="channel-header">
-      //         <span className="channel-icon">📱</span>
-      //         <h3>{channel.name}</h3>
-      //         <label className="toggle-switch">
-      //           <input
-      //             type="checkbox"
-      //             checked={preferences.sms?.enabled || false}
-      //             onChange={() => handleChannelToggle('sms')}
-      //           />
-      //           <span className="toggle-slider"></span>
-      //         </label>
-      //       </div>
-      //       
-      //       {preferences.sms?.enabled && (
-      //         <div className="channel-config">
-      //           <div className="form-group">
-      //             <label>Phone Number</label>
-      //             <input
-      //               type="tel"
-      //               value={preferences.sms?.number || ''}
-      //               onChange={(e) => handleChannelConfigChange('sms', 'number', e.target.value)}
-      //               placeholder="Enter phone number"
-      //             />
-      //           </div>
-      //           <div className="form-group">
-      //             <label>SMS Provider</label>
-      //             <select
-      //               value={preferences.sms?.provider || 'twilio'}
-      //               onChange={(e) => handleChannelConfigChange('sms', 'provider', e.target.value)}
-      //             >
-      //               <option value="twilio">Twilio</option>
-      //               <option value="aws-sns">AWS SNS</option>
-      //             </select>
-      //           </div>
-      //         </div>
-      //       )}
       //     </div>
       //   );
 
