@@ -1,20 +1,23 @@
-version: "3.9"
 services:
   backend:
     build: ./backend
     volumes:
-      - ./backend:/usr/src/app
+      - ./backend:/usr/src/app:cached
+      - /usr/src/app/node_modules
     ports:
       - "4000:4000"
     environment:
-      - DATABASE_URL=postgres://postgres:password@db:5432/patientsdb
+      - DATABASE_URL=postgres://postgres:5442983-8@db:5432/patients
     depends_on:
       - db
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
     volumes:
       - ./frontend:/usr/src/app
+      - ./frontend/.env:/usr/src/app/.env
+      - /usr/src/app/node_modules
     ports:
       - "3000:3000"
     depends_on:
@@ -24,7 +27,7 @@ services:
     image: postgres:15
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: patientsdb
+      POSTGRES_PASSWORD: 5442983-8
+      POSTGRES_DB: patients
     ports:
       - "5432:5432"
