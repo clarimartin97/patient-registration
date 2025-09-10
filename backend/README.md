@@ -7,10 +7,11 @@ A Node.js backend API for patient registration with Express, PostgreSQL, and ema
 - **Patient Registration**: Register patients with full name, email, phone, and document photo
 - **Data Validation**: Comprehensive validation for all input fields
 - **File Upload**: Secure document photo upload (JPG only)
-- **Email Confirmation**: Automatic confirmation emails via Mailtrap
+- **Asynchronous Email Confirmation**: Non-blocking confirmation emails via Mailtrap
 - **Database Storage**: PostgreSQL for reliable data persistence
 - **Security**: Helmet, CORS, rate limiting, and input sanitization
 - **Docker Support**: Containerized application with Docker Compose
+- **Error Handling**: Comprehensive error logging and admin notifications
 
 ## API Endpoints
 
@@ -145,11 +146,41 @@ This application uses Mailtrap for development email testing:
 - **File Type Validation**: Only JPG files allowed
 - **File Size Limits**: Maximum 5MB per file
 
+## Email Configuration
+
+The application uses **Mailtrap** for email delivery in development. Configure the following environment variables:
+
+```env
+# Email Configuration (Mailtrap)
+MAILTRAP_HOST=sandbox.smtp.mailtrap.io
+MAILTRAP_PORT=2525
+MAILTRAP_USER=your_mailtrap_username
+MAILTRAP_PASS=your_mailtrap_password
+
+# Email Settings
+FROM_EMAIL=noreply@patientregistration.com
+ADMIN_EMAIL=admin@patientregistration.com
+```
+
+### Email Features
+
+- **Asynchronous Email Sending**: Confirmation emails are sent in the background without blocking patient registration
+- **Professional Email Templates**: HTML and text versions of confirmation emails
+- **Error Notifications**: Admin notifications for system errors
+- **Comprehensive Logging**: Success and failure logging for email operations
+
+### Testing Email Functionality
+
+Run the email test script:
+```bash
+node test-email.js
+```
+
 ## Error Handling
 
 - Comprehensive error handling with appropriate HTTP status codes
 - Detailed error messages for validation failures
-- Email notifications for system errors
+- Asynchronous email notifications for system errors
 - Graceful handling of email service failures
 
 ## Development

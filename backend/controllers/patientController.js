@@ -1,5 +1,5 @@
 const Patient = require('../models/Patient');
-const EmailService = require('../services/emailService');
+const NotificationService = require('../services/notificationService');
 const path = require('path');
 
 class PatientController {
@@ -25,15 +25,14 @@ class PatientController {
 
       const newPatient = await Patient.create(patientData);
 
-      try {
-        await EmailService.sendConfirmationEmail({
-          fullName,
-          email,
-          id: newPatient.id
-        });
-      } catch (emailError) {
-        // Don't fail the registration if email fails
-      }
+      // Send confirmation notification asynchronously (non-blocking)
+      // Currently sends email, but designed to easily add SMS in the future
+      NotificationService.sendRegistrationConfirmationAsync({
+        fullName,
+        email,
+        phone,
+        id: newPatient.id
+      });
 
       res.status(201).json({
         success: true,
@@ -43,16 +42,17 @@ class PatientController {
           fullName: newPatient.full_name,
           email: newPatient.email,
           phone: newPatient.phone,
+          documentPhoto: Buffer.isBuffer(newPatient.document_photo) 
+            ? newPatient.document_photo.toString() 
+            : newPatient.document_photo,
           createdAt: newPatient.created_at
         }
       });
 
     } catch (error) {
-      try {
-        await EmailService.sendErrorNotification(error, req.body);
-      } catch (emailError) {
-        // Silent fail for error notification
-      }
+      // Send error notification asynchronously (non-blocking)
+      // Currently sends email to admin, but designed to easily add SMS in the future
+      NotificationService.sendErrorNotificationAsync(error, req.body);
 
       if (error.code === '23505') {
         return res.status(409).json({
@@ -80,6 +80,9 @@ class PatientController {
           fullName: patient.full_name,
           email: patient.email,
           phone: patient.phone,
+          documentPhoto: Buffer.isBuffer(patient.document_photo) 
+            ? patient.document_photo.toString('utf8') 
+            : patient.document_photo,
           createdAt: patient.created_at
         }))
       });
@@ -111,7 +114,9 @@ class PatientController {
           fullName: patient.full_name,
           email: patient.email,
           phone: patient.phone,
-          documentPhoto: patient.document_photo,
+          documentPhoto: Buffer.isBuffer(patient.document_photo) 
+            ? patient.document_photo.toString('utf8') 
+            : patient.document_photo,
           createdAt: patient.created_at
         }
       });
@@ -136,6 +141,12 @@ class PatientController {
           message: 'Document photo not found'
         });
       }
+
+      // CORS for images
+      res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:3000');
+      res.header('Access-Control-Allow-Methods', 'GET');
+      res.header('Access-Control-Allow-Headers', 'Content-Type');
+      res.header('Cross-Origin-Resource-Policy', 'cross-origin');
 
       res.sendFile(path.resolve(filePath));
     } catch (error) {

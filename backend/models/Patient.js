@@ -1,5 +1,6 @@
 const pool = require('../config/database');
 
+// TODO: SMS ready for future implementation
 class Patient {
   static async create(patientData) {
     const { fullName, email, phone, documentPhoto } = patientData;
@@ -76,6 +77,7 @@ class Patient {
       throw error;
     }
   }
+
 
   static async initTable() {
     const query = `

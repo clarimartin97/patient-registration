@@ -2,10 +2,10 @@ const transporter = require('../config/email');
 
 class EmailService {
   static async sendConfirmationEmail(patientData) {
-    const { fullName, email } = patientData;
+    const { fullName, email, id } = patientData;
     
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@patientregistration.com',
+      from: process.env.FROM_EMAIL ,
       to: email,
       subject: 'Patient Registration Confirmation',
       html: `
@@ -19,6 +19,7 @@ class EmailService {
           <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
             <h3 style="color: #495057; margin-top: 0;">Registration Details:</h3>
             <ul style="list-style: none; padding: 0;">
+              <li><strong>Patient ID:</strong> #${id}</li>
               <li><strong>Full Name:</strong> ${fullName}</li>
               <li><strong>Email:</strong> ${email}</li>
               <li><strong>Registration Date:</strong> ${new Date().toLocaleDateString()}</li>
@@ -44,6 +45,7 @@ class EmailService {
         Thank you for registering as a patient with our medical system. Your registration has been successfully completed.
         
         Registration Details:
+        - Patient ID: #${id}
         - Full Name: ${fullName}
         - Email: ${email}
         - Registration Date: ${new Date().toLocaleDateString()}
@@ -58,16 +60,31 @@ class EmailService {
 
     try {
       const info = await transporter.sendMail(mailOptions);
+      console.log(`✅ Confirmation email sent successfully to ${email} (Patient ID: ${id})`);
       return { success: true, messageId: info.messageId };
     } catch (error) {
-      throw new Error('Failed to send confirmation email');
+      console.error(`❌ Failed to send confirmation email to ${email} (Patient ID: ${id}):`, error.message);
+      throw new Error(`Failed to send confirmation email: ${error.message}`);
     }
+  }
+
+  // Asynchronous email sending that doesn't block the main process
+  static sendConfirmationEmailAsync(patientData) {
+    // Use setImmediate to ensure this runs in the next tick of the event loop
+    setImmediate(async () => {
+      try {
+        await this.sendConfirmationEmail(patientData);
+      } catch (error) {
+        console.error('Async email sending failed:', error.message);
+        // Optionally, you could implement a retry mechanism or queue failed emails
+      }
+    });
   }
 
   static async sendErrorNotification(error, patientData) {
     const mailOptions = {
-      from: process.env.FROM_EMAIL || 'noreply@patientregistration.com',
-      to: process.env.ADMIN_EMAIL || 'admin@patientregistration.com',
+      from: process.env.FROM_EMAIL,
+      to: process.env.ADMIN_EMAIL,
       subject: 'Patient Registration Error',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -89,10 +106,24 @@ ${JSON.stringify(patientData, null, 2)}
     };
 
     try {
-      await transporter.sendMail(mailOptions);
+      const info = await transporter.sendMail(mailOptions);
+      console.log(`✅ Error notification email sent successfully to admin`);
+      return { success: true, messageId: info.messageId };
     } catch (emailError) {
-      // Silent fail for error notification
+      console.error(`❌ Failed to send error notification email:`, emailError.message);
+      // Silent fail for error notification to avoid cascading errors
     }
+  }
+
+  // Asynchronous error notification that doesn't block the main process
+  static sendErrorNotificationAsync(error, patientData) {
+    setImmediate(async () => {
+      try {
+        await this.sendErrorNotification(error, patientData);
+      } catch (emailError) {
+        console.error('Async error notification failed:', emailError.message);
+      }
+    });
   }
 }
 

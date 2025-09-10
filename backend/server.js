@@ -7,16 +7,30 @@ const path = require('path');
 const fs = require('fs');
 
 const patientRoutes = require('./routes/patientRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 const Patient = require('./models/Patient');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "http://localhost:3000", "http://localhost:4000"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      connectSrc: ["'self'", "http://localhost:3000", "http://localhost:4000"]
+    }
+  }
+}));
 
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 const limiter = rateLimit({
@@ -24,7 +38,7 @@ const limiter = rateLimit({
   max: 100,
   message: {
     success: false,
-    message: 'Too many requests from this IP, please try again later.'
+    message: 'Too many requests from this IP, try again later.'
   }
 });
 app.use(limiter);
@@ -48,6 +62,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/patients', patientRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -59,7 +74,10 @@ app.get('/', (req, res) => {
       registerPatient: 'POST /api/patients',
       getAllPatients: 'GET /api/patients',
       getPatientById: 'GET /api/patients/:id',
-      serveDocument: 'GET /api/patients/documents/:filename'
+      serveDocument: 'GET /api/patients/documents/:filename',
+      notificationChannels: 'GET /api/notifications/channels',
+      notificationConfig: 'GET /api/notifications/config',
+      notificationStats: 'GET /api/notifications/stats'
     }
   });
 });
